@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+import json
+import os
+import subprocess
+import time
+import urllib
+import urllib2
+
+
+def spotify_osascript(command):
+    command = 'tell application "Spotify" to {0} as string'.format(
+        command
+    )
+    command = "osascript -e '{0}'".format(command)
+    return subprocess.check_output(command, shell=True).strip()
+
+
+def update_status(is_playing, text=None):
+    status_text = ''
+    status_emoji = ''
+    if is_playing:
+        status_text = text
+        status_emoji = ':musical_note:'
+
+    content = urllib.urlencode({
+      'token': os.getenv('SLACK_API_TOKEN'),
+      'profile': {
+        "status_text": status_text,
+        "status_emoji": status_emoji,
+      },
+    })
+
+    opener = urllib2.build_opener(urllib2.HTTPHandler)
+    url = 'https://slack.com/api/users.profile.set'
+    request = urllib2.Request(url, data=content)
+    request.get_method = lambda: 'POST'
+    url = opener.open(request)
+    if int(url.getcode()) != 200:
+        print "error: {0}".format(url.getcode())
+
+    return int(url.getcode()) != 200
+
+
+def check_song(old_status=None, first_run=False):
+    status = spotify_osascript('player state')
+    if status.strip() != "playing":
+        if old_status or first_run:
+            print 'Not currently playing'
+            update_status(is_playing=False)
+        return None
+
+    artist = spotify_osascript('artist of current track')
+    track = spotify_osascript('name of current track')
+
+    current_status = "{0} - {1}".format(artist, track)
+    if old_status == current_status:
+        return current_status
+
+    print "Current status: {0}".format(current_status)
+    update_status(is_playing=True, text=current_status)
+
+    return current_status
+
+
+def main():
+    if not os.getenv('SLACK_API_TOKEN', None):
+        print 'Missing SLACK_API_TOKEN environment variable'
+        return
+
+    current_status = None
+    first_run = True
+    while True:
+        current_status = check_song(current_status, first_run)
+        first_run = False
+        time.sleep(10)
+
+
+if __name__ == "__main__":
+    main()

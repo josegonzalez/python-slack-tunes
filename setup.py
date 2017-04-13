@@ -40,7 +40,7 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
     ],
-    description='send slack music notifications from spotify',
+    description='send slack music notifications from itunes or spotify',
     long_description=open_file('README.rst').read(),
     install_requires=open_file('requirements.txt').readlines(),
     zip_safe=True,

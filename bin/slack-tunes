@@ -7,8 +7,9 @@ import urllib
 import urllib2
 
 
-def spotify_osascript(command):
-    command = 'tell application "Spotify" to {0} as string'.format(
+def osascript(player, command):
+    command = 'tell application "{0}" to {1} as string'.format(
+        player,
         command
     )
     command = "osascript -e '{0}'".format(command)
@@ -41,18 +42,25 @@ def update_status(is_playing, text=None):
     return int(url.getcode()) != 200
 
 
+def spotify_song():
+    return osascript('Spotify', 'if player state is playing then name of current track & " - " & artist of current track')  # pep8
+
+
+def itunes_song():
+    return osascript('iTunes', 'if player state is playing then name of current track & " - " & artist of current track')  # pep8
+
+
 def check_song(old_status=None, first_run=False):
-    status = spotify_osascript('player state')
-    if status.strip() != "playing":
+    current_status = spotify_song()
+    if not current_status:
+        current_status = itunes_song()
+
+    if not current_status:
         if old_status or first_run:
             print 'Not currently playing'
             update_status(is_playing=False)
         return None
 
-    artist = spotify_osascript('artist of current track')
-    track = spotify_osascript('name of current track')
-
-    current_status = "{0} - {1}".format(artist, track)
     if old_status == current_status:
         return current_status
 

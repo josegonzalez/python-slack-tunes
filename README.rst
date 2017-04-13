@@ -1,13 +1,13 @@
 python-slack-tunes
 --------------------
 
-send slack music notifications from spotify
+send slack music notifications from itunes or spotify
 
 Requirements
 ============
 
 - OS X
-- Spotify
+- iTunes or Spotify
 
 Installation
 ============

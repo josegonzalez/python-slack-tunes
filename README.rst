@@ -32,7 +32,7 @@ Export a ``SLACK_API_TOKEN``, as shown on their `tokens page <https://get.slack.
 
 Slack tunes will run in the foreground, and can be terminated at any time. It will update the status at most every 10 seconds, and will clear your status if no music is playing.
 
-.. image:: demo.png
+.. image:: https://cdn.rawgit.com/josegonzalez/python-slack-tunes/2383034e/demo.png
     :width: 1010px
     :align: center
     :height: 382px

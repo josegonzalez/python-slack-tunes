@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.1.0 (2017-04-13)
+------------------
+
+- Feat: add support for iTunes music player. [Jose Diaz-Gonzalez]
+
 0.0.2 (2017-04-13)
 ------------------
 

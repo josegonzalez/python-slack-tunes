@@ -1,7 +1,12 @@
 Changelog
 =========
 
-0.3.0 (2017-04-13)
+0.3.1 (2017-04-14)
+------------------
+
+- Add try/except cases to catch bad AppleScript responses. [Ben Kreeger]
+
+0.3.0 (2017-04-14)
 ------------------
 
 - Docs: fix the pypi description. [Jose Diaz-Gonzalez]

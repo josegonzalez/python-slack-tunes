@@ -27,10 +27,18 @@ Export a ``SLACK_API_TOKEN``, as shown on their `tokens page <https://get.slack.
 
 .. code-block:: shell
 
-    export SLACK_API_TOKEN=YOUR_TOKEN
+    export SLACK_API_TOKEN="YOUR_TOKEN"
     slack-tunes
 
 Slack tunes will run in the foreground, and can be terminated at any time. It will update the status at most every 10 seconds, and will clear your status if no music is playing.
+
+
+You can also specify multiple tokens via comma-delimiter. This is useful for notifying multiple slack teams.
+
+.. code-block:: shell
+
+    export SLACK_API_TOKEN="YOUR_TOKEN,YOUR_OTHER_TOKEN"
+    slack-tunes
 
 .. image:: https://cdn.rawgit.com/josegonzalez/python-slack-tunes/2383034e/demo.png
     :width: 1010px

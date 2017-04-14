@@ -7,6 +7,9 @@ import urllib
 import urllib2
 
 
+SLACK_API_TOKENS = filter(None, os.getenv('SLACK_API_TOKEN', '').split(','))
+
+
 def osascript(player, command):
     command = 'tell application "{0}" to {1} as string'.format(
         player,
@@ -23,23 +26,27 @@ def update_status(is_playing, text=None):
         status_text = text
         status_emoji = ':musical_note:'
 
-    content = urllib.urlencode({
-      'token': os.getenv('SLACK_API_TOKEN'),
-      'profile': {
-        "status_text": status_text,
-        "status_emoji": status_emoji,
-      },
-    })
+    responses = []
+    for token in SLACK_API_TOKENS:
+        content = urllib.urlencode({
+          'token': token,
+          'profile': {
+            "status_text": status_text,
+            "status_emoji": status_emoji,
+          },
+        })
 
-    opener = urllib2.build_opener(urllib2.HTTPHandler)
-    url = 'https://slack.com/api/users.profile.set'
-    request = urllib2.Request(url, data=content)
-    request.get_method = lambda: 'POST'
-    url = opener.open(request)
-    if int(url.getcode()) != 200:
-        print "error: {0}".format(url.getcode())
+        opener = urllib2.build_opener(urllib2.HTTPHandler)
+        url = 'https://slack.com/api/users.profile.set'
+        request = urllib2.Request(url, data=content)
+        request.get_method = lambda: 'POST'
+        url = opener.open(request)
+        status = int(url.getcode()) != 200
+        if status:
+            print "error: {0}".format(url.getcode())
+        responses.append(status)
 
-    return int(url.getcode()) != 200
+    return responses
 
 
 def spotify_song():
@@ -71,9 +78,12 @@ def check_song(old_status=None, first_run=False):
 
 
 def main():
-    if not os.getenv('SLACK_API_TOKEN', None):
+    if len(SLACK_API_TOKENS) == 0:
         print 'Missing SLACK_API_TOKEN environment variable'
         return
+
+    if len(SLACK_API_TOKENS) > 1:
+        print 'Notifying {0} slacks'.format(len(SLACK_API_TOKENS))
 
     current_status = None
     first_run = True

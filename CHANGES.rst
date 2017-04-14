@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.2.0 (2017-04-13)
+------------------
+
+- Feat: add support for notifying multiple slack teams. [Jose Diaz-
+  Gonzalez]
+
 0.1.0 (2017-04-13)
 ------------------
 

@@ -48,11 +48,17 @@ def update_status(is_playing, text=None, tokens=None):
 
 
 def spotify_song():
-    return osascript('Spotify', 'if player state is playing then name of current track & " - " & artist of current track')  # pep8
+    try:
+        return osascript('Spotify', 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
+    except subprocess.CalledProcessError:
+        return None
 
 
 def itunes_song():
-    return osascript('iTunes', 'if player state is playing then name of current track & " - " & artist of current track')  # pep8
+    try:
+        return osascript('iTunes', 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
+    except subprocess.CalledProcessError:
+        return None
 
 
 def check_song(old_status=None, first_run=False, tokens=None):

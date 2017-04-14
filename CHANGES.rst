@@ -1,7 +1,14 @@
 Changelog
 =========
 
-0.2.0 (2017-04-13)
+0.3.0 (2017-04-13)
+------------------
+
+- Docs: fix the pypi description. [Jose Diaz-Gonzalez]
+
+- Refactor: move logic into updater.py. [Jose Diaz-Gonzalez]
+
+0.2.0 (2017-04-14)
 ------------------
 
 - Feat: add support for notifying multiple slack teams. [Jose Diaz-

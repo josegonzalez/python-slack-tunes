@@ -48,10 +48,18 @@ def update_status(is_playing, text=None, tokens=None):
 
 
 def spotify_song():
+    song = ''
     try:
-        return osascript('Spotify', 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
+        song = osascript('Spotify', 'if player state is playing then artist of current track & " __SLACK_TUNES_DELIMITER__ " & name of current track')  # pep8
     except subprocess.CalledProcessError:
-        return None
+        song = ''
+
+    song = song.strip()
+    if song.startswith('__SLACK_TUNES_DELIMITER__'):
+        song = None
+    else:
+        song = song.replace('__SLACK_TUNES_DELIMITER__', '-')
+    return song
 
 
 def itunes_song():

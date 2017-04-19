@@ -1,9 +1,32 @@
 from __future__ import print_function
 import json
+import sys
 import subprocess
 import urllib
 import urllib2
 
+
+PY3 = sys.version_info[0] == 3
+bad_chars = str("").join([chr(i) for i in range(128, 256)])  # ascii dammit!
+if PY3:
+    translation_table = dict((ord(c), None) for c in bad_chars)
+    unicode = str
+
+
+def asciionly(s):
+    if PY3:
+        return s.translate(translation_table)
+    else:
+        return s.translate(None, bad_chars)
+
+
+def asciidammit(s):
+    if type(s) is str:
+        return asciionly(s)
+    elif type(s) is unicode:
+        return asciionly(s.encode('ascii', 'ignore'))
+    else:
+        return asciidammit(unicode(s))
 
 
 def osascript(player, command):
@@ -83,6 +106,9 @@ def check_song(old_status=None, first_run=False, tokens=None):
     current_status = spotify_song()
     if not current_status:
         current_status = itunes_song()
+
+    if current_status:
+        current_status = asciidammit(current_status)
 
     if not current_status:
         if old_status or first_run:

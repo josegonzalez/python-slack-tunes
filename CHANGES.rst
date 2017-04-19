@@ -1,7 +1,19 @@
 Changelog
 =========
 
-0.3.2 (2017-04-18)
+0.4.0 (2017-04-19)
+------------------
+
+- Feat: print out the error when slack gives us an error… [Jose Diaz-
+  Gonzalez]
+
+- Chore: use single quotes everywhere. [Jose Diaz-Gonzalez]
+
+- Feat: send song through asciidammit. [Jose Diaz-Gonzalez]
+
+- Refactor: use print_function from __futures__ [Jose Diaz-Gonzalez]
+
+0.3.2 (2017-04-19)
 ------------------
 
 Fix

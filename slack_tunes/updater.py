@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import subprocess
 import urllib
@@ -52,7 +53,7 @@ def update_status(is_playing, text=None, tokens=None):
         url = opener.open(request)
         status = int(url.getcode()) != 200
         if status:
-            print "error: {0}".format(url.getcode())
+            print("error: {0}".format(url.getcode()))
         responses.append(status)
 
     return responses
@@ -85,14 +86,14 @@ def check_song(old_status=None, first_run=False, tokens=None):
 
     if not current_status:
         if old_status or first_run:
-            print 'Not currently playing'
+            print('Not currently playing')
             update_status(is_playing=False, tokens=tokens)
         return None
 
     if old_status == current_status:
         return current_status
 
-    print "Current status: {0}".format(current_status)
+    print("Current status: {0}".format(current_status))
     update_status(is_playing=True, text=current_status, tokens=tokens)
 
     return current_status

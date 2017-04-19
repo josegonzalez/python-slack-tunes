@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import time
 
@@ -9,11 +10,11 @@ def main():
     SLACK_API_TOKENS = filter(None, os.getenv('SLACK_API_TOKEN', '').split(','))
 
     if len(SLACK_API_TOKENS) == 0:
-        print 'Missing SLACK_API_TOKEN environment variable'
+        print('Missing SLACK_API_TOKEN environment variable')
         return
 
     if len(SLACK_API_TOKENS) > 1:
-        print 'Notifying {0} slacks'.format(len(SLACK_API_TOKENS))
+        print('Notifying {0} slacks'.format(len(SLACK_API_TOKENS)))
 
     current_status = None
     first_run = True

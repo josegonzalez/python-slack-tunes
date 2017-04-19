@@ -14,6 +14,17 @@ def osascript(player, command):
     return subprocess.check_output(command, shell=True).strip()
 
 
+def is_running(player):
+    command = 'if application "{0}" is running then "running"'.format(
+        player
+    )
+    command = "osascript -e '{0}'".format(command)
+    try:
+        return subprocess.check_output(command, shell=True).strip() == "running"
+    except subprocess.CalledProcessError:
+        return False
+
+
 def update_status(is_playing, text=None, tokens=None):
     status_text = ''
     status_emoji = ''
@@ -48,6 +59,9 @@ def update_status(is_playing, text=None, tokens=None):
 
 
 def spotify_song():
+    if not is_running('Spotify'):
+        return None
+
     try:
         return osascript('Spotify', 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
     except subprocess.CalledProcessError:
@@ -55,6 +69,9 @@ def spotify_song():
 
 
 def itunes_song():
+    if not is_running('iTunes'):
+        return None
+
     try:
         return osascript('iTunes', 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
     except subprocess.CalledProcessError:

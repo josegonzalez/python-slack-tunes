@@ -34,7 +34,7 @@ def osascript(player, command):
         player,
         command
     )
-    command = "osascript -e '{0}'".format(command)
+    command = 'osascript -e \'{0}\''.format(command)
     return subprocess.check_output(command, shell=True).strip()
 
 
@@ -42,9 +42,9 @@ def is_running(player):
     command = 'if application "{0}" is running then "running"'.format(
         player
     )
-    command = "osascript -e '{0}'".format(command)
+    command = 'osascript -e \'{0}\''.format(command)
     try:
-        return subprocess.check_output(command, shell=True).strip() == "running"
+        return subprocess.check_output(command, shell=True).strip() == 'running'
     except subprocess.CalledProcessError:
         return False
 
@@ -64,8 +64,8 @@ def update_status(is_playing, text=None, tokens=None):
         content = urllib.urlencode({
           'token': token,
           'profile': {
-            "status_text": status_text,
-            "status_emoji": status_emoji,
+            'status_text': status_text,
+            'status_emoji': status_emoji,
           },
         })
 
@@ -76,7 +76,7 @@ def update_status(is_playing, text=None, tokens=None):
         url = opener.open(request)
         status = int(url.getcode()) != 200
         if status:
-            print("error: {0}".format(url.getcode()))
+            print('error: {0}'.format(url.getcode()))
         responses.append(status)
 
     return responses
@@ -119,7 +119,7 @@ def check_song(old_status=None, first_run=False, tokens=None):
     if old_status == current_status:
         return current_status
 
-    print("Current status: {0}".format(current_status))
+    print('Current status: {0}'.format(current_status))
     update_status(is_playing=True, text=current_status, tokens=tokens)
 
     return current_status

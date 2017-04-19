@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.3.2 (2017-04-18)
+------------------
+
+Fix
+~~~
+
+- Do not try to start the player if it is not running. [Jose Diaz-
+  Gonzalez]
+
+  Telling an application to do something will cause that application to start
+
+
 0.3.1 (2017-04-14)
 ------------------
 

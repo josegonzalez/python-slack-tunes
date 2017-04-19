@@ -77,6 +77,10 @@ def update_status(is_playing, text=None, tokens=None):
         status = int(url.getcode()) != 200
         if status:
             print('error: {0}'.format(url.getcode()))
+        else:
+            body = json.loads(url.read())
+            if not body.get('ok'):
+                print('error: {0}'.format(url.read()))
         responses.append(status)
 
     return responses

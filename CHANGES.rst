@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.4.1 (2018-09-27)
+------------------
+
+Fix
+~~~
+
+- Check if the song starts with the delimiter to avoid updating with
+  ads. [Jose Diaz-Gonzalez]
+
 0.4.0 (2017-04-19)
 ------------------
 

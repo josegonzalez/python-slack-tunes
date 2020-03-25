@@ -2,12 +2,13 @@
 from __future__ import print_function
 import os
 import time
+import atexit
 
-from slack_tunes.updater import check_song
+from slack_tunes.updater import check_song, clear_status
 
 
 def main():
-    SLACK_API_TOKENS = filter(None, os.getenv('SLACK_API_TOKEN', '').split(','))
+    SLACK_API_TOKENS = os.getenv('SLACK_API_TOKEN', '').split(',')
 
     if len(SLACK_API_TOKENS) == 0:
         print('Missing SLACK_API_TOKEN environment variable')
@@ -16,6 +17,7 @@ def main():
     if len(SLACK_API_TOKENS) > 1:
         print('Notifying {0} slacks'.format(len(SLACK_API_TOKENS)))
 
+    atexit.register(clear_status,SLACK_API_TOKENS)
     current_status = None
     first_run = True
     while True:

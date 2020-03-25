@@ -118,3 +118,7 @@ def check_song(old_status=None, first_run=False, tokens=None):
     update_status(is_playing=True, text=current_status, tokens=tokens)
 
     return current_status
+
+
+def clear_status(tokens=None):
+    update_status(is_playing=False,tokens=tokens)

@@ -2,8 +2,9 @@
 from __future__ import print_function
 import os
 import time
+import atexit
 
-from slack_tunes.updater import check_song
+from slack_tunes.updater import check_song, clear_status
 
 
 def main():
@@ -16,6 +17,7 @@ def main():
     if len(SLACK_API_TOKENS) > 1:
         print('Notifying {0} slacks'.format(len(SLACK_API_TOKENS)))
 
+    atexit.register(clear_status,SLACK_API_TOKENS)
     current_status = None
     first_run = True
     while True:

@@ -7,7 +7,7 @@ from slack_tunes.updater import check_song
 
 
 def main():
-    SLACK_API_TOKENS = filter(None, os.getenv('SLACK_API_TOKEN', '').split(','))
+    SLACK_API_TOKENS = os.getenv('SLACK_API_TOKEN', '').split(',')
 
     if len(SLACK_API_TOKENS) == 0:
         print('Missing SLACK_API_TOKEN environment variable')

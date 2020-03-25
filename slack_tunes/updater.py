@@ -2,32 +2,8 @@ from __future__ import print_function
 import json
 import sys
 import subprocess
-import urllib
-import urllib2
-
-
-PY3 = sys.version_info[0] == 3
-bad_chars = str("").join([chr(i) for i in range(128, 256)])  # ascii dammit!
-if PY3:
-    translation_table = dict((ord(c), None) for c in bad_chars)
-    unicode = str
-
-
-def asciionly(s):
-    if PY3:
-        return s.translate(translation_table)
-    else:
-        return s.translate(None, bad_chars)
-
-
-def asciidammit(s):
-    if type(s) is str:
-        return asciionly(s)
-    elif type(s) is unicode:
-        return asciionly(s.encode('ascii', 'ignore'))
-    else:
-        return asciidammit(unicode(s))
-
+import urllib.parse
+import requests
 
 def osascript(player, command):
     command = 'tell application "{0}" to {1} as string'.format(
@@ -35,7 +11,7 @@ def osascript(player, command):
         command
     )
     command = 'osascript -e \'{0}\''.format(command)
-    return subprocess.check_output(command, shell=True).strip()
+    return subprocess.check_output(command, shell=True).decode(sys.stdout.encoding).strip()
 
 
 def is_running(player):
@@ -44,7 +20,7 @@ def is_running(player):
     )
     command = 'osascript -e \'{0}\''.format(command)
     try:
-        return subprocess.check_output(command, shell=True).strip() == 'running'
+        return subprocess.check_output(command, shell=True).decode(sys.stdout.encoding).strip() == 'running'
     except subprocess.CalledProcessError:
         return False
 
@@ -52,6 +28,7 @@ def is_running(player):
 def update_status(is_playing, text=None, tokens=None):
     status_text = ''
     status_emoji = ''
+
     if is_playing:
         status_text = text
         status_emoji = ':musical_note:'
@@ -61,26 +38,28 @@ def update_status(is_playing, text=None, tokens=None):
 
     responses = []
     for token in tokens:
-        content = urllib.urlencode({
-          'token': token,
+        content = {
           'profile': {
             'status_text': status_text,
             'status_emoji': status_emoji,
           },
-        })
+        }
 
-        opener = urllib2.build_opener(urllib2.HTTPHandler)
-        url = 'https://slack.com/api/users.profile.set'
-        request = urllib2.Request(url, data=content)
-        request.get_method = lambda: 'POST'
-        url = opener.open(request)
-        status = int(url.getcode()) != 200
+        req_headers = {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Authorization': 'Bearer ' + token,
+        }
+
+        request = requests.post('https://slack.com/api/users.profile.set', data=json.dumps(content), headers=req_headers)
+        status = request.status_code != 200
+
         if status:
-            print('error: {0}'.format(url.getcode()))
+            print('error: {0}'.format(str(request.status_code)))
         else:
-            body = json.loads(url.read())
+            body = json.loads(request.text)
             if not body.get('ok'):
-                print('error: {0}'.format(url.read()))
+                print('error: {0}'.format(request.text))
+
         responses.append(status)
 
     return responses
@@ -104,12 +83,17 @@ def spotify_song():
     return song
 
 
-def itunes_song():
-    if not is_running('iTunes'):
+def itunes_song(catalina=False):
+    if catalina:
+        app = 'Music'
+    else:
+        app = 'iTunes'
+
+    if not is_running(app):
         return None
 
     try:
-        return osascript('iTunes', 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
+        return osascript(app, 'if player state is playing then artist of current track & " - " & name of current track')  # pep8
     except subprocess.CalledProcessError:
         return None
 
@@ -118,9 +102,8 @@ def check_song(old_status=None, first_run=False, tokens=None):
     current_status = spotify_song()
     if not current_status:
         current_status = itunes_song()
-
-    if current_status:
-        current_status = asciidammit(current_status)
+    if not current_status:
+        current_status = itunes_song(catalina=True)
 
     if not current_status:
         if old_status or first_run:
